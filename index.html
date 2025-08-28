@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBCosplay - Bán và Cho Thuê Trang Phục Cosplay</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .product-card { transition: transform 0.3s; }
+        .product-card:hover { transform: scale(1.05); }
+        .product-image { object-fit: cover; width: 100%; height: 200px; cursor: pointer; }
+        .zoom-image { max-width: 90%; max-height: 90%; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">BBCosplay</h1>
+            <div class="flex items-center space-x-4">
+                <input type="text" id="searchInput" placeholder="Tìm kiếm trang phục..." class="p-2 rounded text-black">
+                <button id="cartButton" class="bg-white text-blue-600 px-4 py-2 rounded">Giỏ hàng (<span id="cartCount">0</span>)</button>
+                <a href="#contact" class="hover:underline">Liên hệ</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="bg-blue-500 text-white py-10">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl font-bold mb-4">Bán & Cho Thuê Trang Phục Cosplay</h2>
+            <p>Khám phá hàng ngàn bộ trang phục độc đáo cho cosplay, chụp ảnh, hóa trang và biểu diễn!</p>
+        </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="container mx-auto px-4 py-6 bg-white shadow mb-6">
+        <h2 class="text-xl font-bold mb-4">Bộ Lọc Nâng Cao</h2>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <select id="categoryFilter" class="p-2 border rounded">
+                <option value="">Tất cả danh mục</option>
+                <option value="Kimono Nhật Bản">Kimono Nhật Bản</option>
+                <option value="Việt Phục">Việt Phục</option>
+                <option value="Mông Cổ Tây Vực">Mông Cổ Tây Vực</option>
+                <option value="Ấn Độ">Ấn Độ</option>
+                <option value="Hàng mới về">Hàng mới về</option>
+            </select>
+            <input type="number" id="minRent" placeholder="Giá thuê tối thiểu (₫)" class="p-2 border rounded">
+            <input type="number" id="maxRent" placeholder="Giá thuê tối đa (₫)" class="p-2 border rounded">
+            <button id="applyFilters" class="bg-blue-600 text-white px-4 py-2 rounded">Áp dụng bộ lọc</button>
+        </div>
+    </section>
+
+    <!-- Product Categories -->
+    <section class="container mx-auto px-4 py-10">
+        <h2 class="text-2xl font-bold mb-6">Danh Mục Trang Phục</h2>
+        <div id="productList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            <!-- Products will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-6 rounded shadow-lg w-96 max-h-96 overflow-y-auto">
+            <h2 class="text-xl font-bold mb-4">Giỏ Hàng</h2>
+            <div id="cartItems"></div>
+            <div class="mt-4 flex justify-between">
+                <p class="font-bold">Tổng tiền thuê: <span id="totalRent">0₫</span></p>
+                <div>
+                    <button id="clearCart" class="bg-gray-600 text-white px-4 py-2 rounded mr-2">Xóa toàn bộ</button>
+                    <button id="checkout" class="bg-blue-600 text-white px-4 py-2 rounded">Thanh toán</button>
+                    <button id="closeCart" class="bg-red-600 text-white px-4 py-2 rounded">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded">
+            <img id="zoomImage" class="zoom-image" src="" alt="Zoomed Image">
+            <button id="closeImageModal" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Why Choose Us -->
+    <section class="bg-white py-10">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl font-bold mb-6 text-center">Tại Sao Chọn BBCosplay?</h2>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                <div class="text-center">
+                    <h3 class="font-semibold">Chất lượng đảm bảo</h3>
+                    <p>Chất lượng được kiểm tra bởi đội ngũ nhân viên.</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-semibold">Tư vấn miễn phí</h3>
+                    <p>Tư vấn thân thiện 24/7 miễn phí.</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-semibold">Thử đồ miễn phí</h3>
+                    <p>Xem và thử đồ không bao giờ phải trả tiền.</p>
+                </div>
+                <div class="text-center">
+                    <h3 class="font-semibold">Hoàn tiền sai sót</h3>
+                    <p>Nếu sai sót xảy ra, bạn nhận lại đủ tiền.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="bg-gray-200 py-10">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-2xl font-bold mb-4">Liên Hệ</h2>
+            <p>Địa chỉ: 118/19 Bạch Đằng, P.24, Q. Bình Thạnh, TP.HCM</p>
+            <p>Hotline (Zalo): 0947.927.017</p>
+            <div class="mt-4">
+                <a href="#" class="text-blue-600 hover:underline mx-2">Zalo</a>
+                <a href="#" class="text-blue-600 hover:underline mx-2">Messenger</a>
+                <a href="#" class="text-blue-600 hover:underline mx-2">Facebook</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-4 text-center">
+        <p>&copy; 2025 BBCosplay. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, and Image Zoom -->
+    <script>
+        const products = [
+            {
+                category: "Kimono Nhật Bản",
+                name: "Áo Yukata Đen Hoa Trắng Xám - Mẫu Tay Ngắn",
+                code: "17499",
+                rent: "280.000₫",
+                sale: "690.000₫",
+                rentNum: 280000,
+                image: "https://picsum.photos/300/200?random=1"
+            },
+            {
+                category: "Kimono Nhật Bản",
+                name: "Kẹp Tóc Hoa Bỉ Ngạn Đỏ - Kẹp Tóc Chụp Ảnh",
+                code: "17516",
+                rent: "10.000₫",
+                sale: "35.000₫",
+                rentNum: 10000,
+                image: "https://picsum.photos/300/200?random=2"
+            },
+            {
+                category: "Kimono Nhật Bản",
+                name: "Áo Yukata Shiro Aka Nền Trắng Phối Đỏ",
+                code: "934",
+                rent: "200.000₫",
+                sale: "490.000₫",
+                rentNum: 200000,
+                image: "https://picsum.photos/300/200?random=3"
+            },
+            {
+                category: "Kimono Nhật Bản",
+                name: "Kimono Samurai Kimono Nam Trắng",
+                code: "14101",
+                rent: "150.000₫",
+                sale: "519.000₫",
+                rentNum: 150000,
+                image: "https://picsum.photos/300/200?random=4"
+            },
+            {
+                category: "Kimono Nhật Bản",
+                name: "Kimono Nam Phong Cách Samurai - Áo Kem Váy Sọc",
+                code: "17498",
+                rent: "150.000₫",
+                sale: "519.000₫",
+                rentNum: 150000,
+                image: "https://picsum.photos/300/200?random=5"
+            },
+            {
+                category: "Việt Phục",
+                name: "Ngũ Thân Xanh Navy Lụa Lót Đỏ",
+                code: "16680",
+                rent: "250.000₫",
+                sale: "675.000₫",
+                rentNum: 250000,
+                image: "https://picsum.photos/300/200?random=6"
+            },
+            {
+                category: "Việt Phục",
+                name: "Trang Phục Nhật Bình Xanh Dương - Hoạ Tiết In",
+                code: "17397",
+                rent: "450.000₫",
+                sale: "1.600.000₫",
+                rentNum: 450000,
+                image: "https://picsum.photos/300/200?random=7"
+            },
+            {
+                category: "Mông Cổ Tây Vực",
+                name: "Đồ Mông Cổ Tây Vực Nam Nữ - Xanh",
+                code: "16538",
+                rent: "490.000₫",
+                sale: "1.200.000₫",
+                rentNum: 490000,
+                image: "https://picsum.photos/300/200?random=8"
+            },
+            {
+                category: "Mông Cổ Tây Vực",
+                name: "Trang Phục Múa Đôn Hoàng - Tư Hạ",
+                code: "17131",
+                rent: "290.000₫",
+                sale: "895.000₫",
+                rentNum: 290000,
+                image: "https://picsum.photos/300/200?random=9"
+            },
+            {
+                category: "Ấn Độ",
+                name: "Trang Phục Hoàng Tử Ấn Độ Tone Đỏ Hoàng Gia Kèm Nón",
+                code: "16942",
+                rent: "350.000₫",
+                sale: "1.600.000₫",
+                rentNum: 350000,
+                image: "https://picsum.photos/300/200?random=10"
+            },
+            {
+                category: "Ấn Độ",
+                name: "Trang Phục Cô Dâu Ấn Độ Đỏ Tay Dài Kim Tuyến",
+                code: "1626",
+                rent: "100.000₫",
+                sale: "390.000₫",
+                rentNum: 100000,
+                image: "https://picsum.photos/300/200?random=11"
+            },
+            {
+                category: "Hàng mới về",
+                name: "Cà Vạt Harry Potter Thắt Sẵn - Rowena Ravenclaw",
+                code: "17555",
+                rent: "30.000₫",
+                sale: "90.000₫",
+                rentNum: 30000,
+                image: "https://picsum.photos/300/200?random=12"
+            }
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function saveCartToLocalStorage() {
+            localStorage.setItem('cart', JSON.stringify(cart));
+        }
+
+        function displayProducts(filteredProducts) {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            filteredProducts.forEach((product, index) => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card bg-white p-4 rounded shadow';
+                productCard.innerHTML = `
+                    <img src="${product.image}" alt="${product.name}" class="product-image rounded mb-2" onclick="zoomImage('${product.image}', '${product.name}')">
+                    <h3 class="font-semibold">${product.name}</h3>
+                    <p class="text-sm text-gray-600">Mã: ${product.code}</p>
+                    <p class="text-green-600">Thuê: ${product.rent}</p>
+                    <p class="text-blue-600">Bán: ${product.sale}</p>
+                    <button onclick="addToCart(${index})" class="bg-green-600 text-white px-2 py-1 rounded mt-2">Thêm vào giỏ</button>
+                `;
+                productList.appendChild(productCard);
+            });
+        }
+
+        function addToCart(index) {
+            const product = products[index];
+            const existingItem = cart.find(item => item.code === product.code);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ ...product, quantity: 1 });
+            }
+            saveCartToLocalStorage();
+            updateCartDisplay();
+        }
+
+        function updateCartDisplay() {
+            document.getElementById('cartCount').textContent = cart.reduce((sum, item) => sum + item.quantity, 0);
+            const cartItems = document.getElementById('cartItems');
+            cartItems.innerHTML = '';
+            let totalRent = 0;
+            cart.forEach((item, idx) => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'flex justify-between mb-2';
+                itemDiv.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>${(item.rentNum * item.quantity).toLocaleString()}₫</span>
+                    <button onclick="removeFromCart(${idx})" class="text-red-600">Xóa</button>
+                `;
+                cartItems.appendChild(itemDiv);
+                totalRent += item.rentNum * item.quantity;
+            });
+            document.getElementById('totalRent').textContent = totalRent.toLocaleString() + '₫';
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            saveCartToLocalStorage();
+            updateCartDisplay();
+        }
+
+        function clearCart() {
+            cart = [];
+            saveCartToLocalStorage();
+            updateCartDisplay();
+        }
+
+        function zoomImage(imageSrc, imageAlt) {
+            document.getElementById('zoomImage').src = imageSrc;
+            document.getElementById('zoomImage').alt = imageAlt;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Giỏ hàng trống! Vui lòng thêm sản phẩm trước khi thanh toán.');
+                return;
+            }
+            let orderSummary = 'Đơn hàng của bạn:\n\n';
+            cart.forEach(item => {
+                orderSummary += `${item.name} x${item.quantity}: ${(item.rentNum * item.quantity).toLocaleString()}₫\n`;
+            });
+            orderSummary += `\nTổng tiền thuê: ${cart.reduce((sum, item) => sum + item.rentNum * item.quantity, 0).toLocaleString()}₫`;
+            orderSummary += '\n\nVui lòng liên hệ qua Zalo (0947.927.017) hoặc đến cửa hàng tại 118/19 Bạch Đằng, P.24, Q. Bình Thạnh, TP.HCM để hoàn tất thanh toán.';
+            alert(orderSummary);
+        }
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', applyAllFilters);
+
+        // Filters
+        document.getElementById('applyFilters').addEventListener('click', applyAllFilters);
+        document.getElementById('categoryFilter').addEventListener('change', applyAllFilters);
+
+        function applyAllFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const category = document.getElementById('categoryFilter').value;
+            const minRent = parseInt(document.getElementById('minRent').value) || 0;
+            const maxRent = parseInt(document.getElementById('maxRent').value) || Infinity;
+
+            const filteredProducts = products.filter(product => 
+                (product.name.toLowerCase().includes(searchTerm) || product.category.toLowerCase().includes(searchTerm)) &&
+                (category === '' || product.category === category) &&
+                (product.rentNum >= minRent && product.rentNum <= maxRent)
+            );
+            displayProducts(filteredProducts);
+        }
+
+        // Cart Modal
+        document.getElementById('cartButton').addEventListener('click', () => {
+            document.getElementById('cartModal').classList.remove('hidden');
+            updateCartDisplay();
+        });
+        document.getElementById('closeCart').addEventListener('click', () => {
+            document.getElementById('cartModal').classList.add('hidden');
+        });
+        document.getElementById('clearCart').addEventListener('click', clearCart);
+        document.getElementById('checkout').addEventListener('click', checkout);
+
+        // Image Zoom Modal
+        document.getElementById('closeImageModal').addEventListener('click', () => {
+            document.getElementById('imageModal').classList.add('hidden');
+        });
+
+        // Initial display
+        displayProducts(products);
+        updateCartDisplay();
+    </script>
+</body>
+</html>
