@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBCosplay - Bài Viết</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .post-image { object-fit: cover; width: 100%; max-height: 400px; cursor: pointer; }
+        .zoom-image { max-width: 90%; max-height: 90%; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">BBCosplay</h1>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="hover:underline">Quay lại trang chủ</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Post Content -->
+    <section class="container mx-auto px-4 py-10">
+        <div id="postContent" class="bg-white p-6 rounded shadow">
+            <h2 class="text-2xl font-bold mb-4">Loading...</h2>
+            <p class="text-sm text-gray-600 mb-2">Loading...</p>
+            <img id="postImage" src="" alt="Post Image" class="post-image rounded mb-4">
+            <p id="postText" class="text-gray-700"></p>
+        </div>
+    </section>
+
+    <!-- Image Zoom Modal -->
+    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div class="bg-white p-4 rounded">
+            <img id="zoomImage" class="zoom-image" src="" alt="Zoomed Image">
+            <button id="closeImageModal" class="bg-red-600 text-white px-4 py-2 rounded mt-2">Đóng</button>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-4 text-center">
+        <p>&copy; 2025 BBCosplay. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Post Display and Image Zoom -->
+    <script>
+        const posts = [
+            {
+                title: "Hướng Dẫn Chọn Yukata Phù Hợp Cho Sự Kiện Cosplay",
+                excerpt: "Tìm hiểu cách chọn yukata phù hợp với phong cách và sự kiện của bạn, từ màu sắc đến họa tiết.",
+                date: "2025-08-20",
+                image: "https://picsum.photos/300/200?random=13",
+                content: "Yukata là một loại trang phục truyền thống Nhật Bản, thường được sử dụng trong các sự kiện cosplay nhờ vẻ đẹp đơn giản nhưng thanh lịch. Để chọn yukata phù hợp, bạn cần chú ý đến màu sắc, họa tiết, và kích cỡ. Màu sắc nên phù hợp với chủ đề sự kiện, ví dụ: tông màu đỏ hoặc xanh navy cho các sự kiện truyền thống, hoặc màu pastel cho phong cách hiện đại. Họa tiết hoa hoặc hình học tạo điểm nhấn độc đáo. Ngoài ra, hãy đảm bảo yukata vừa vặn, không quá chật hoặc rộng, và kết hợp với phụ kiện như obi (đai lưng) để hoàn thiện diện mạo."
+            },
+            {
+                title: "Top 5 Mẹo Tạo Hình Việt Phục Đẹp Mắt",
+                excerpt: "Khám phá các mẹo để diện Việt Phục một cách ấn tượng, từ cách phối đồ đến phụ kiện.",
+                date: "2025-08-15",
+                image: "https://picsum.photos/300/200?random=14",
+                content: "Việt Phục, như áo ngũ thân hay nhật bình, mang đậm nét văn hóa Việt Nam, là lựa chọn tuyệt vời cho cosplay hoặc chụp ảnh. Mẹo 1: Chọn màu sắc phù hợp với tông da, như xanh navy hoặc đỏ thắm. Mẹo 2: Kết hợp phụ kiện như trâm cài hoặc khăn vấn. Mẹo 3: Chọn chất liệu vải cao cấp như lụa để tăng độ sang trọng. Mẹo 4: Chú ý cách buộc đai để tạo dáng thanh thoát. Mẹo 5: Đừng quên trang điểm nhẹ nhàng để tôn lên nét đẹp truyền thống."
+            },
+            {
+                title: "Lịch Sử Trang Phục Mông Cổ Tây Vực",
+                excerpt: "Tìm hiểu về nguồn gốc và ý nghĩa văn hóa của trang phục Mông Cổ Tây Vực trong cosplay.",
+                date: "2025-08-10",
+                image: "https://picsum.photos/300/200?random=15",
+                content: "Trang phục Mông Cổ Tây Vực mang phong cách độc đáo, kết hợp giữa sự mạnh mẽ và tinh tế. Có nguồn gốc từ các dân tộc du mục, trang phục này thường có áo dài, váy phối màu sắc rực rỡ, và các phụ kiện như mũ hoặc khăn choàng. Trong cosplay, trang phục Mông Cổ Tây Vực được yêu thích nhờ sự khác biệt và khả năng tạo hình ấn tượng. Để tái hiện đúng, hãy chú ý đến các chi tiết như thêu tay hoặc đính đá, đồng thời chọn màu sắc như xanh pastel hoặc đỏ để nổi bật."
+            },
+            {
+                title: "Cách Phối Đồ Ấn Độ Cho Cô Dâu Cosplay",
+                excerpt: "Hướng dẫn chi tiết cách phối trang phục cô dâu Ấn Độ để tỏa sáng trong các buổi chụp ảnh.",
+                date: "2025-08-05",
+                image: "https://picsum.photos/300/200?random=16",
+                content: "Trang phục cô dâu Ấn Độ, như lehenga hay sari, là biểu tượng của sự lộng lẫy và quyến rũ. Để phối đồ ấn tượng, hãy chọn lehenga đỏ hoặc hồng với kim tuyến và đính đá. Kết hợp với trang sức như vòng cổ, bông tai lớn, và vòng tay để tăng độ sang trọng. Đừng quên khăn choàng (dupatta) được xếp nếp tinh tế. Trang điểm nên tập trung vào mắt với eyeliner đậm và son môi đỏ. Phụ kiện như nón hoàng gia cũng là điểm nhấn độc đáo cho cosplay."
+            }
+        ];
+
+        function displayPost() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const postIndex = parseInt(urlParams.get('index'));
+            if (isNaN(postIndex) || postIndex < 0 || postIndex >= posts.length) {
+                document.getElementById('postContent').innerHTML = '<p>Bài viết không tồn tại.</p>';
+                return;
+            }
+            const post = posts[postIndex];
+            document.getElementById('postContent').innerHTML = `
+                <h2 class="text-2xl font-bold mb-4">${post.title}</h2>
+                <p class="text-sm text-gray-600 mb-2">${post.date}</p>
+                <img src="${post.image}" alt="${post.title}" class="post-image rounded mb-4" onclick="zoomImage('${post.image}', '${post.title}')">
+                <p class="text-gray-700">${post.content}</p>
+            `;
+        }
+
+        function zoomImage(imageSrc, imageAlt) {
+            document.getElementById('zoomImage').src = imageSrc;
+            document.getElementById('zoomImage').alt = imageAlt;
+            document.getElementById('imageModal').classList.remove('hidden');
+        }
+
+        // Image Zoom Modal
+        document.getElementById('closeImageModal').addEventListener('click', () => {
+            document.getElementById('imageModal').classList.add('hidden');
+        });
+
+        // Initial display
+        displayPost();
+    </script>
+</body>
+</html>
