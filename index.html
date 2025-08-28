@@ -6,9 +6,9 @@
     <title>BBCosplay - Bán và Cho Thuê Trang Phục Cosplay</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        .product-card { transition: transform 0.3s; }
-        .product-card:hover { transform: scale(1.05); }
-        .product-image { object-fit: cover; width: 100%; height: 200px; cursor: pointer; }
+        .product-card, .post-card { transition: transform 0.3s; }
+        .product-card:hover, .post-card:hover { transform: scale(1.05); }
+        .product-image, .post-image { object-fit: cover; width: 100%; height: 200px; cursor: pointer; }
         .zoom-image { max-width: 90%; max-height: 90%; }
     </style>
 </head>
@@ -56,6 +56,17 @@
         <h2 class="text-2xl font-bold mb-6">Danh Mục Trang Phục</h2>
         <div id="productList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             <!-- Products will be dynamically inserted here -->
+        </div>
+    </section>
+
+    <!-- Blog Posts Section -->
+    <section class="container mx-auto px-4 py-10">
+        <h2 class="text-2xl font-bold mb-6">Bài Viết Mới Nhất</h2>
+        <div class="mb-6">
+            <input type="text" id="postSearchInput" placeholder="Tìm kiếm bài viết..." class="p-2 border rounded w-full max-w-md">
+        </div>
+        <div id="postList" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <!-- Blog posts will be dynamically inserted here -->
         </div>
     </section>
 
@@ -127,7 +138,7 @@
         <p>&copy; 2025 BBCosplay. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, and Image Zoom -->
+    <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, Image Zoom, and Blog Posts -->
     <script>
         const products = [
             {
@@ -240,6 +251,33 @@
             }
         ];
 
+        const posts = [
+            {
+                title: "Hướng Dẫn Chọn Yukata Phù Hợp Cho Sự Kiện Cosplay",
+                excerpt: "Tìm hiểu cách chọn yukata phù hợp với phong cách và sự kiện của bạn, từ màu sắc đến họa tiết.",
+                date: "2025-08-20",
+                image: "https://picsum.photos/300/200?random=13"
+            },
+            {
+                title: "Top 5 Mẹo Tạo Hình Việt Phục Đẹp Mắt",
+                excerpt: "Khám phá các mẹo để diện Việt Phục một cách ấn tượng, từ cách phối đồ đến phụ kiện.",
+                date: "2025-08-15",
+                image: "https://picsum.photos/300/200?random=14"
+            },
+            {
+                title: "Lịch Sử Trang Phục Mông Cổ Tây Vực",
+                excerpt: "Tìm hiểu về nguồn gốc và ý nghĩa văn hóa của trang phục Mông Cổ Tây Vực trong cosplay.",
+                date: "2025-08-10",
+                image: "https://picsum.photos/300/200?random=15"
+            },
+            {
+                title: "Cách Phối Đồ Ấn Độ Cho Cô Dâu Cosplay",
+                excerpt: "Hướng dẫn chi tiết cách phối trang phục cô dâu Ấn Độ để tỏa sáng trong các buổi chụp ảnh.",
+                date: "2025-08-05",
+                image: "https://picsum.photos/300/200?random=16"
+            }
+        ];
+
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
 
         function saveCartToLocalStorage() {
@@ -261,6 +299,22 @@
                     <button onclick="addToCart(${index})" class="bg-green-600 text-white px-2 py-1 rounded mt-2">Thêm vào giỏ</button>
                 `;
                 productList.appendChild(productCard);
+            });
+        }
+
+        function displayPosts(filteredPosts) {
+            const postList = document.getElementById('postList');
+            postList.innerHTML = '';
+            filteredPosts.forEach(post => {
+                const postCard = document.createElement('div');
+                postCard.className = 'post-card bg-white p-4 rounded shadow';
+                postCard.innerHTML = `
+                    <img src="${post.image}" alt="${post.title}" class="post-image rounded mb-2" onclick="zoomImage('${post.image}', '${post.title}')">
+                    <h3 class="font-semibold">${post.title}</h3>
+                    <p class="text-sm text-gray-600">${post.date}</p>
+                    <p class="text-gray-700">${post.excerpt}</p>
+                `;
+                postList.appendChild(postCard);
             });
         }
 
@@ -327,8 +381,18 @@
             alert(orderSummary);
         }
 
-        // Search
+        // Search Products
         document.getElementById('searchInput').addEventListener('input', applyAllFilters);
+
+        // Search Posts
+        document.getElementById('postSearchInput').addEventListener('input', () => {
+            const searchTerm = document.getElementById('postSearchInput').value.toLowerCase();
+            const filteredPosts = posts.filter(post =>
+                post.title.toLowerCase().includes(searchTerm) ||
+                post.excerpt.toLowerCase().includes(searchTerm)
+            );
+            displayPosts(filteredPosts);
+        });
 
         // Filters
         document.getElementById('applyFilters').addEventListener('click', applyAllFilters);
@@ -340,7 +404,7 @@
             const minRent = parseInt(document.getElementById('minRent').value) || 0;
             const maxRent = parseInt(document.getElementById('maxRent').value) || Infinity;
 
-            const filteredProducts = products.filter(product => 
+            const filteredProducts = products.filter(product =>
                 (product.name.toLowerCase().includes(searchTerm) || product.category.toLowerCase().includes(searchTerm)) &&
                 (category === '' || product.category === category) &&
                 (product.rentNum >= minRent && product.rentNum <= maxRent)
@@ -366,6 +430,7 @@
 
         // Initial display
         displayProducts(products);
+        displayPosts(posts);
         updateCartDisplay();
     </script>
 </body>
