@@ -21,6 +21,7 @@
                 <input type="text" id="searchInput" placeholder="Tìm kiếm trang phục..." class="p-2 rounded text-black">
                 <button id="cartButton" class="bg-white text-blue-600 px-4 py-2 rounded">Giỏ hàng (<span id="cartCount">0</span>)</button>
                 <a href="#contact" class="hover:underline">Liên hệ</a>
+                <a href="admin.html" class="hover:underline">Admin</a>
             </div>
         </div>
     </header>
@@ -140,7 +141,7 @@
 
     <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, Image Zoom, and Blog Posts -->
     <script>
-        const products = [
+        let products = JSON.parse(localStorage.getItem('products')) || [
             {
                 category: "Kimono Nhật Bản",
                 name: "Áo Yukata Đen Hoa Trắng Xám - Mẫu Tay Ngắn",
@@ -251,7 +252,7 @@
             }
         ];
 
-        const posts = [
+        let posts = JSON.parse(localStorage.getItem('posts')) || [
             {
                 title: "Hướng Dẫn Chọn Yukata Phù Hợp Cho Sự Kiện Cosplay",
                 excerpt: "Tìm hiểu cách chọn yukata phù hợp với phong cách và sự kiện của bạn, từ màu sắc đến họa tiết.",
@@ -434,6 +435,14 @@
         document.getElementById('closeImageModal').addEventListener('click', () => {
             document.getElementById('imageModal').classList.add('hidden');
         });
+
+        // Initialize localStorage if empty
+        if (!localStorage.getItem('products')) {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+        if (!localStorage.getItem('posts')) {
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
 
         // Initial display
         displayProducts(products);

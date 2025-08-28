@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBCosplay - Quản Lý Admin</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .admin-section { margin-bottom: 2rem; }
+        .item-card { border: 1px solid #e5e7eb; padding: 1rem; margin-bottom: 1rem; }
+    </style>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">BBCosplay - Admin</h1>
+            <a href="index.html" class="hover:underline">Quay lại trang chủ</a>
+        </div>
+    </header>
+
+    <!-- Admin Content -->
+    <section class="container mx-auto px-4 py-10">
+        <h2 class="text-2xl font-bold mb-6">Quản Lý Sản Phẩm và Bài Viết</h2>
+
+        <!-- Product Management -->
+        <div class="admin-section bg-white p-6 rounded shadow">
+            <h3 class="text-xl font-semibold mb-4">Quản Lý Sản Phẩm</h3>
+            <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <input type="hidden" id="productIndex">
+                <input type="text" id="productCategory" placeholder="Danh mục" class="p-2 border rounded">
+                <input type="text" id="productName" placeholder="Tên sản phẩm" class="p-2 border rounded">
+                <input type="text" id="productCode" placeholder="Mã sản phẩm" class="p-2 border rounded">
+                <input type="text" id="productRent" placeholder="Giá thuê (VD: 280.000₫)" class="p-2 border rounded">
+                <input type="text" id="productSale" placeholder="Giá bán (VD: 690.000₫)" class="p-2 border rounded">
+                <input type="number" id="productRentNum" placeholder="Giá thuê (số, VD: 280000)" class="p-2 border rounded">
+                <input type="text" id="productImage" placeholder="URL hình ảnh" class="p-2 border rounded">
+                <button type="submit" id="saveProduct" class="bg-blue-600 text-white px-4 py-2 rounded">Lưu sản phẩm</button>
+            </form>
+            <div id="productList" class="mt-4"></div>
+        </div>
+
+        <!-- Post Management -->
+        <div class="admin-section bg-white p-6 rounded shadow">
+            <h3 class="text-xl font-semibold mb-4">Quản Lý Bài Viết</h3>
+            <form id="postForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+                <input type="hidden" id="postIndex">
+                <input type="text" id="postTitle" placeholder="Tiêu đề bài viết" class="p-2 border rounded">
+                <input type="text" id="postExcerpt" placeholder="Tóm tắt" class="p-2 border rounded">
+                <input type="date" id="postDate" class="p-2 border rounded">
+                <input type="text" id="postImage" placeholder="URL hình ảnh" class="p-2 border rounded">
+                <textarea id="postContent" placeholder="Nội dung bài viết" class="p-2 border rounded col-span-2" rows="5"></textarea>
+                <button type="submit" id="savePost" class="bg-blue-600 text-white px-4 py-2 rounded">Lưu bài viết</button>
+            </form>
+            <div id="postList" class="mt-4"></div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-4 text-center">
+        <p>&copy; 2025 BBCosplay. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Admin Management -->
+    <script>
+        // Simple password prompt (not secure for production)
+        const password = prompt("Nhập mật khẩu admin:");
+        if (password !== "admin123") { // Change this in production
+            alert("Mật khẩu sai!");
+            window.location.href = "index.html";
+        }
+
+        let products = JSON.parse(localStorage.getItem('products')) || [];
+        let posts = JSON.parse(localStorage.getItem('posts')) || [];
+
+        function saveProductsToLocalStorage() {
+            localStorage.setItem('products', JSON.stringify(products));
+        }
+
+        function savePostsToLocalStorage() {
+            localStorage.setItem('posts', JSON.stringify(posts));
+        }
+
+        function displayProducts() {
+            const productList = document.getElementById('productList');
+            productList.innerHTML = '';
+            products.forEach((product, index) => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+                itemCard.innerHTML = `
+                    <p><strong>${product.name}</strong> (Mã: ${product.code})</p>
+                    <p>Danh mục: ${product.category}</p>
+                    <p>Thuê: ${product.rent} | Bán: ${product.sale}</p>
+                    <p>Hình ảnh: ${product.image}</p>
+                    <button onclick="editProduct(${index})" class="bg-yellow-600 text-white px-2 py-1 rounded mr-2">Sửa</button>
+                    <button onclick="deleteProduct(${index})" class="bg-red-600 text-white px-2 py-1 rounded">Xóa</button>
+                `;
+                productList.appendChild(itemCard);
+            });
+        }
+
+        function displayPosts() {
+            const postList = document.getElementById('postList');
+            postList.innerHTML = '';
+            posts.forEach((post, index) => {
+                const itemCard = document.createElement('div');
+                itemCard.className = 'item-card';
+                itemCard.innerHTML = `
+                    <p><strong>${post.title}</strong></p>
+                    <p>Ngày: ${post.date}</p>
+                    <p>Tóm tắt: ${post.excerpt}</p>
+                    <p>Hình ảnh: ${post.image}</p>
+                    <button onclick="editPost(${index})" class="bg-yellow-600 text-white px-2 py-1 rounded mr-2">Sửa</button>
+                    <button onclick="deletePost(${index})" class="bg-red-600 text-white px-2 py-1 rounded">Xóa</button>
+                `;
+                postList.appendChild(itemCard);
+            });
+        }
+
+        function editProduct(index) {
+            const product = products[index];
+            document.getElementById('productIndex').value = index;
+            document.getElementById('productCategory').value = product.category;
+            document.getElementById('productName').value = product.name;
+            document.getElementById('productCode').value = product.code;
+            document.getElementById('productRent').value = product.rent;
+            document.getElementById('productSale').value = product.sale;
+            document.getElementById('productRentNum').value = product.rentNum;
+            document.getElementById('productImage').value = product.image;
+        }
+
+        function editPost(index) {
+            const post = posts[index];
+            document.getElementById('postIndex').value = index;
+            document.getElementById('postTitle').value = post.title;
+            document.getElementById('postExcerpt').value = post.excerpt;
+            document.getElementById('postDate').value = post.date;
+            document.getElementById('postImage').value = post.image;
+            document.getElementById('postContent').value = post.content;
+        }
+
+        function deleteProduct(index) {
+            if (confirm('Bạn có chắc muốn xóa sản phẩm này?')) {
+                products.splice(index, 1);
+                saveProductsToLocalStorage();
+                displayProducts();
+            }
+        }
+
+        function deletePost(index) {
+            if (confirm('Bạn có chắc muốn xóa bài viết này?')) {
+                posts.splice(index, 1);
+                savePostsToLocalStorage();
+                displayPosts();
+            }
+        }
+
+        document.getElementById('productForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const index = document.getElementById('productIndex').value;
+            const product = {
+                category: document.getElementById('productCategory').value,
+                name: document.getElementById('productName').value,
+                code: document.getElementById('productCode').value,
+                rent: document.getElementById('productRent').value,
+                sale: document.getElementById('productSale').value,
+                rentNum: parseInt(document.getElementById('productRentNum').value),
+                image: document.getElementById('productImage').value
+            };
+            if (index === '') {
+                products.push(product);
+            } else {
+                products[parseInt(index)] = product;
+            }
+            saveProductsToLocalStorage();
+            displayProducts();
+            document.getElementById('productForm').reset();
+            document.getElementById('productIndex').value = '';
+        });
+
+        document.getElementById('postForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const index = document.getElementById('postIndex').value;
+            const post = {
+                title: document.getElementById('postTitle').value,
+                excerpt: document.getElementById('postExcerpt').value,
+                date: document.getElementById('postDate').value,
+                image: document.getElementById('postImage').value,
+                content: document.getElementById('postContent').value
+            };
+            if (index === '') {
+                posts.push(post);
+            } else {
+                posts[parseInt(index)] = post;
+            }
+            savePostsToLocalStorage();
+            displayPosts();
+            document.getElementById('postForm').reset();
+            document.getElementById('postIndex').value = '';
+        });
+
+        // Initial display
+        displayProducts();
+        displayPosts();
+    </script>
+</body>
+</html>
