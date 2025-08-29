@@ -21,7 +21,11 @@
                 <input type="text" id="searchInput" placeholder="Tìm kiếm trang phục..." class="p-2 rounded text-black">
                 <button id="cartButton" class="bg-white text-blue-600 px-4 py-2 rounded">Giỏ hàng (<span id="cartCount">0</span>)</button>
                 <a href="#contact" class="hover:underline">Liên hệ</a>
-                <a href="admin.html" class="hover:underline">Admin</a>
+                <a href="admin.html" id="adminLink" class="hover:underline hidden">Admin</a>
+                <span id="userInfo" class="hidden"></span>
+                <button id="logoutButton" class="bg-red-600 text-white px-4 py-2 rounded hidden">Đăng xuất</button>
+                <a href="login.html" id="loginLink" class="hover:underline">Đăng nhập</a>
+                <a href="register.html" id="registerLink" class="hover:underline">Đăng ký</a>
             </div>
         </div>
     </header>
@@ -139,7 +143,8 @@
         <p>&copy; 2025 BBCosplay. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, Image Zoom, and Blog Posts -->
+    <!-- JavaScript for Product Display, Search, Filters, Cart, localStorage, Image Zoom, Blog Posts, and User Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
     <script>
         let products = JSON.parse(localStorage.getItem('products')) || [
             {
@@ -288,6 +293,37 @@
         function saveCartToLocalStorage() {
             localStorage.setItem('cart', JSON.stringify(cart));
         }
+
+        function updateHeader() {
+            const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+            const loginLink = document.getElementById('loginLink');
+            const registerLink = document.getElementById('registerLink');
+            const logoutButton = document.getElementById('logoutButton');
+            const userInfo = document.getElementById('userInfo');
+            const adminLink = document.getElementById('adminLink');
+
+            if (currentUser) {
+                loginLink.classList.add('hidden');
+                registerLink.classList.add('hidden');
+                logoutButton.classList.remove('hidden');
+                userInfo.classList.remove('hidden');
+                userInfo.textContent = `Xin chào, ${currentUser.username}`;
+                if (currentUser.isAdmin) {
+                    adminLink.classList.remove('hidden');
+                }
+            } else {
+                loginLink.classList.remove('hidden');
+                registerLink.classList.remove('hidden');
+                logoutButton.classList.add('hidden');
+                userInfo.classList.add('hidden');
+                adminLink.classList.add('hidden');
+            }
+        }
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            updateHeader();
+        });
 
         function displayProducts(filteredProducts) {
             const productList = document.getElementById('productList');
@@ -443,8 +479,14 @@
         if (!localStorage.getItem('posts')) {
             localStorage.setItem('posts', JSON.stringify(posts));
         }
+        if (!localStorage.getItem('users')) {
+            localStorage.setItem('users', JSON.stringify([
+                { username: "admin", email: "admin@bbcosplay.com", password: sha256("admin123"), isAdmin: true }
+            ]));
+        }
 
         // Initial display
+        updateHeader();
         displayProducts(products);
         displayPosts(posts);
         updateCartDisplay();

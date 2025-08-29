@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BBCosplay - Đăng Ký</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white py-4">
+        <div class="container mx-auto px-4 flex justify-between items-center">
+            <h1 class="text-2xl font-bold">BBCosplay</h1>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="hover:underline">Quay lại trang chủ</a>
+                <a href="login.html" class="hover:underline">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Register Form -->
+    <section class="container mx-auto px-4 py-10">
+        <div class="bg-white p-6 rounded shadow max-w-md mx-auto">
+            <h2 class="text-2xl font-bold mb-6">Đăng Ký Thành Viên</h2>
+            <form id="registerForm" class="grid grid-cols-1 gap-4">
+                <input type="text" id="username" placeholder="Tên người dùng" class="p-2 border rounded">
+                <input type="email" id="email" placeholder="Email" class="p-2 border rounded">
+                <input type="password" id="password" placeholder="Mật khẩu" class="p-2 border rounded">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Đăng ký</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-blue-600 text-white py-4 text-center">
+        <p>&copy; 2025 BBCosplay. All rights reserved.</p>
+    </footer>
+
+    <!-- JavaScript for Registration -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            if (users.find(user => user.username === username || user.email === email)) {
+                alert('Tên người dùng hoặc email đã tồn tại!');
+                return;
+            }
+
+            users.push({
+                username,
+                email,
+                password: sha256(password),
+                isAdmin: username === 'admin' // Only 'admin' user is admin for demo
+            });
+            localStorage.setItem('users', JSON.stringify(users));
+            alert('Đăng ký thành công! Vui lòng đăng nhập.');
+            window.location.href = 'login.html';
+        });
+    </script>
+</body>
+</html>

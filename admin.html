@@ -15,7 +15,11 @@
     <header class="bg-blue-600 text-white py-4">
         <div class="container mx-auto px-4 flex justify-between items-center">
             <h1 class="text-2xl font-bold">BBCosplay - Admin</h1>
-            <a href="index.html" class="hover:underline">Quay lại trang chủ</a>
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="hover:underline">Quay lại trang chủ</a>
+                <span id="userInfo" class="hidden"></span>
+                <button id="logoutButton" class="bg-red-600 text-white px-4 py-2 rounded hidden">Đăng xuất</button>
+            </div>
         </div>
     </header>
 
@@ -61,14 +65,28 @@
         <p>&copy; 2025 BBCosplay. All rights reserved.</p>
     </footer>
 
-    <!-- JavaScript for Admin Management -->
+    <!-- JavaScript for Admin Management and User Management -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sha256/0.9.0/sha256.min.js"></script>
     <script>
-        // Simple password prompt (not secure for production)
-        const password = prompt("Nhập mật khẩu admin:");
-        if (password !== "admin123") { // Change this in production
-            alert("Mật khẩu sai!");
+        // Check if user is logged in and is admin
+        const currentUser = JSON.parse(localStorage.getItem('currentUser'));
+        if (!currentUser || !currentUser.isAdmin) {
+            alert("Bạn cần đăng nhập với tài khoản admin để truy cập trang này!");
             window.location.href = "index.html";
         }
+
+        function updateHeader() {
+            const userInfo = document.getElementById('userInfo');
+            const logoutButton = document.getElementById('logoutButton');
+            userInfo.classList.remove('hidden');
+            logoutButton.classList.remove('hidden');
+            userInfo.textContent = `Xin chào, ${currentUser.username}`;
+        }
+
+        document.getElementById('logoutButton').addEventListener('click', () => {
+            localStorage.removeItem('currentUser');
+            window.location.href = "index.html";
+        });
 
         let products = JSON.parse(localStorage.getItem('products')) || [];
         let posts = JSON.parse(localStorage.getItem('posts')) || [];
@@ -109,7 +127,7 @@
                     <p><strong>${post.title}</strong></p>
                     <p>Ngày: ${post.date}</p>
                     <p>Tóm tắt: ${post.excerpt}</p>
-                    <p>Hình ảnh: ${post.image}</p>
+                    <p>Hình ảnh: ${product.image}</p>
                     <button onclick="editPost(${index})" class="bg-yellow-600 text-white px-2 py-1 rounded mr-2">Sửa</button>
                     <button onclick="deletePost(${index})" class="bg-red-600 text-white px-2 py-1 rounded">Xóa</button>
                 `;
@@ -200,6 +218,7 @@
         });
 
         // Initial display
+        updateHeader();
         displayProducts();
         displayPosts();
     </script>
